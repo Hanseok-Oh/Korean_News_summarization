@@ -8,6 +8,10 @@ SKKU_TNT 19-2학기 co deeplearning 프로젝트.
 
 해당 스크립트 하나만 실행하면 요약 결과 제시
 
+[edubey/text_summarizer](https://github.com/edubey/text-summarizer)의 깃헙을 참고하여 수정하였습니다. 
+
+자세한 내용을 알고 싶으신 분들은 [본 깃헙내 설명글](https://github.com/Hanseok-Oh/Text_Summarization/tree/master/%5B10%5Dcode/edubey_text_summarizer)을 참조해주세요.
+
 ### 1.1 How to use
 -------------
 

@@ -2,7 +2,7 @@
 SKKU_TNT 19-2학기 co deeplearning 프로젝트. 
 
 
-## 1. extractive_summarizer.py
+## 1. extractive_summarizer.py ( in progress)
 --------------------
 뉴스 기사 하나의 본문에 대한 내용을 원하는 수의 문장으로 요약
 

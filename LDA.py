@@ -5,7 +5,7 @@ https://gist.github.com/ratsgo/c68296fa65420f6d2d970781f02f5420
 
 import random
 from collections import Counter
-from preprocess2 import processing
+from preprocess import processing
 
 p = processing()
 # print("input filename: ")

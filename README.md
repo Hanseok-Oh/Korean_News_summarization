@@ -2,40 +2,6 @@
 SKKU_TNT 19-2학기 co deeplearning 프로젝트. 
 
 
-## 1. extractive_summarizer.py ( in progress)
---------------------
-뉴스 기사 하나의 본문에 대한 내용을 원하는 수의 문장으로 요약
-
-해당 스크립트 하나만 실행하면 요약 결과 제시
-
-[edubey/text_summarizer](https://github.com/edubey/text-summarizer)의 깃헙을 참고하여 수정하였습니다. 
-
-자세한 내용을 알고 싶으신 분들은 [본 깃헙내 설명글](https://github.com/Hanseok-Oh/Text_Summarization/tree/master/%5B10%5Dcode/edubey_text_summarizer)을 참조해주세요.
-
-### 1.1 How to use
--------------
-
-  1. git clone https://github.com/Hanseok-Oh/Korean_News_summarization.git
-  2. move to directory
-  3. put the target file into the 'data/articles_content/' directory.
-  4. <b> python extractive_summarizer.py --file_name = FILE_NAME --number = NUMBER </b>
-
-  - 요약을 실시하고자 하는 파일을 'data/articles_content/FILE_NAME' 형태로 넣어둔다. 형식은 txt 파일
-  - 결과로 요약하고자 하는 문장 수를 입력 : NUMBER (default 2)
-
-
------------------------
-파일명 & 요약할 문장 수
-
-  optional arguments:
-  
-  -h, --help            show this help message and exit
-  
-  --file_name FILE_NAME  요약을 진행할 txt파일명을 입력하시오.                       
-                        
-  --number NUMBER       결과로 제시할 문장 수를 입력하시오.
-
-
 ## 0. models
 code flow : dataCrawl -> preprocess -> LDA -> summarization
 
@@ -110,3 +76,37 @@ document에 존재하는 단어들이 어떤 topic에 속할 확률이 가장 �
 - To do
 > 각 토픽을 대표하는 문서를 추출하는 방법을 찾아야 함
 > 각 토픽에서 단어들을 보고 이슈(주제)를 명명할 근거를 찾아야 함
+
+## 1. extractive_summarizer.py ( in progress)
+--------------------
+뉴스 기사 하나의 본문에 대한 내용을 원하는 수의 문장으로 요약
+
+해당 스크립트 하나만 실행하면 요약 결과 제시
+
+[edubey/text_summarizer](https://github.com/edubey/text-summarizer)의 깃헙을 참고하여 수정하였습니다. 
+
+자세한 내용을 알고 싶으신 분들은 [본 깃헙내 설명글](https://github.com/Hanseok-Oh/Text_Summarization/tree/master/%5B10%5Dcode/edubey_text_summarizer)을 참조해주세요.
+
+### 1.1 How to use
+-------------
+
+  1. git clone https://github.com/Hanseok-Oh/Korean_News_summarization.git
+  2. move to directory
+  3. put the target file into the 'data/articles_content/' directory.
+  4. <b> python extractive_summarizer.py --file_name = FILE_NAME --number = NUMBER </b>
+
+  - 요약을 실시하고자 하는 파일을 'data/articles_content/FILE_NAME' 형태로 넣어둔다. 형식은 txt 파일
+  - 결과로 요약하고자 하는 문장 수를 입력 : NUMBER (default 2)
+
+
+-----------------------
+파일명 & 요약할 문장 수
+
+  optional arguments:
+  
+  -h, --help            show this help message and exit
+  
+  --file_name FILE_NAME  요약을 진행할 txt파일명을 입력하시오.                       
+                        
+  --number NUMBER       결과로 제시할 문장 수를 입력하시오.
+

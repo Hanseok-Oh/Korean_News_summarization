@@ -22,6 +22,7 @@ class processing:
 
     def cleanText(self,sentence):
         # 특수문자를 제거
+        assert type(sentence) == str
         cleaned_sentence = re.sub('[-=+,#/\?:^$.@*\"※~&%ㆍ!』\’\\‘|\(\)\[\]\<\>`\'…》ⓒ▶]', '', sentence)
         return cleaned_sentence
 
@@ -41,13 +42,15 @@ class processing:
 
     def main(self,filename):
         '''
-        :param sentences: 뉴txt 형식의 뉴스 기사
+        :param sentences: txt 형식의 뉴스 기사
         :return: 전처리가 완료된 이중 리스트 형태의 단어들
         '''
         df = self.read_file(filename)
         sentences = df.iloc[:, 3]
         preprocessed_senteces = []
         for sentence in sentences:
+            if type(sentence)!=str:
+                continue
             temp = self.cleanText(sentence)
             temp1 = self.extract_nouns(temp)
             temp2 = self.remove_stopword(temp1)
@@ -57,7 +60,3 @@ class processing:
 
 # 전처리 프로세스 : input sentence -> lemmatization-> 정규표현식으로 특수문자 제거 / stopword제거 -> 사용할 품사만 추출
 # 현재 : input sentence -> 특수문자 제거 -> 명사추출 -> 불용어 제거
-
-
-# p = processing()
-# print(p.main('data/두산모빌리티_contents_text.txt'))

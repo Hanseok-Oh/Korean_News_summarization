@@ -28,6 +28,7 @@ code flow : dataCrawl -> preprocess -> LDA -> summarization
 
 
 -----------------------
+<pre><code>
 파일명 & 요약할 문장 수
 
   optional arguments:
@@ -38,3 +39,4 @@ code flow : dataCrawl -> preprocess -> LDA -> summarization
                         
   --number NUMBER       결과로 제시할 문장 수를 입력하시오.
 
+</pre></code>

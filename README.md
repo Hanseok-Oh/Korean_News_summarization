@@ -10,7 +10,9 @@ code flow : dataCrawl -> preprocess -> LDA -> summarization
 
 전체 프로세스를 진행하는 script
 
-query 정보는 필수로 입력 (ex. 현대자동차, 11번가 등의 검색할 키워드 / 원하는 결과 조합 가능 : 현대자동차+취업)
+query 정보는 필수로 입력 
+
+(ex. 현대자동차, 11번가 등의 검색할 키워드 / 원하는 결과 조합 가능 : 현대자동차+취업)
 
 <pre><code>
 def define_argparser():

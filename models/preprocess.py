@@ -10,7 +10,7 @@ def read_data(filename, encoding='utf-8'):
         data = [line.split('\t') for line in f.read().splitlines()]
         return data
 
-class processing:
+class Processing:
     def __init__(self):
         self.hannanum = Hannanum()
         self.stop_words = read_data(filename='korean_stopwords_list.txt')

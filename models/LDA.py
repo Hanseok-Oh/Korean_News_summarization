@@ -4,10 +4,9 @@ https://gist.github.com/ratsgo/c68296fa65420f6d2d970781f02f5420
 '''
 import random
 from collections import Counter
+from models.preprocess import Processing
 
-from models.preprocess import processing
-
-class modelLDA:
+class ModelLDA:
     def __init__(self,documents):
         self.seed = random.seed(0)
         self.K = 4
@@ -65,26 +64,6 @@ class modelLDA:
                     self.topic_word_counts[new_topic][word] += 1
                     self.topic_counts[new_topic] += 1
                     self.document_lengths[d] += 1
-
-# import argparse
-#
-# parser = argparse.ArgumentParser(description = '파일명')
-# parser.add_argument('--file_name',required=True,help = '요약을 진행할 txt파일명을 입력하시오.')
-# # 입력받은 인자값을 args에 저장
-# args = parser.parse_args()
-# # article당 본문 기사 데이터는 'data/articles_content'폴더에 존재
-# p = processing()
-# documents = p.main('../data/'+args.file_name)
-#
-# m = modelLDA(documents)
-# m.main()
-# print(m.document_topic_counts[0])
-# for i in range(4):
-#     print("{}번째 topic:".format(i))
-#     for key in m.topic_counts[i].keys():
-#         if m.topic_counts[i] !=0:
-#             print(m.topic_counts[i][key])
-
 
 
 

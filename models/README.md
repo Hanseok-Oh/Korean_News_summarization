@@ -8,25 +8,34 @@ code flow : dataCrawl -> preprocess -> LDA -> summarization
 
 
 <pre><code> 
-  def main():
-      maxpage = input("최대 출력할 페이지수 입력하시오: ")
-      query = input("검색어 입력: ")
-      s_date = input("시작날짜 입력(ex.2019.01.01):")  # 2019.01.01
-      e_date = input("끝날짜 입력(ex.2019.04.28):")  # 2019.04.28
-      crawler(maxpage, query, s_date, e_date)  # 검색된 네이버뉴스의 기사내용을 크롤링합니다.
-      excel_make(query,s_date +'~'+ e_date)  # 엑셀로 만들기
+class Crawling:
+    def __init__(self, max_page, query, s_date, e_date, result_path):
+        self.result_path = result_path + '/data'
+        self.max_page = max_page
+        self.query = query
+        self.s_date = s_date
+        self.e_date = e_date
+        print("crawling: ", self.query)
+        
+    ...
+    
+    def excel_make(self, query, date):
+        data = pd.read_csv(self.result_path + '/{}_contents_text.txt'.format(query), sep='\t', header=None,
+                           error_bad_lines=False)
+        data.columns = ['years', 'company', 'title', 'contents', 'link']
+        xlsx_outputFileName = '{}.xlsx'.format(query)
+        data.to_excel(self.result_path + '/crawling_' + xlsx_outputFileName, encoding='utf-8')
+        return
+
 </code></pre>
     
     
-main 함수는 다음과 같이 작동합니다.
- 
-- maxpage:  10개 단위로 출력할 페이지 묶음 수
-- query : 네이버 뉴스에서 긁어모을 기사의 키워드
-- s_date / e_date : 기사를 긁어모으길 시작할 날짜와 중단할 날짜
 
 => years, company(언론사), title, contents, link 의 column에 맞춰서 
 
 RESULT_PATH+'/{}_contents_text.txt'.format(query) 형태로 파일이 저장됨 
+
+같은 내용으로 excel 파일 {query}.xlsx
 
 ### 0.2 preprocess.py 
 ----------------
@@ -34,21 +43,22 @@ input sentence -> 특수문자 제거 -> 명사추출 -> 불용어 제거
 
 <pre><code>
 def main(self,filename):
-        '''
-        :param sentences: txt 형식의 뉴스 기사
-        :return: 전처리가 완료된 이중 리스트 형태의 단어들
-        '''
-        df = self.read_file(filename)
-        sentences = df.iloc[:, 3]
-        preprocessed_senteces = []
-        for sentence in sentences:
-            temp = self.cleanText(sentence)
-            temp1 = self.extract_nouns(temp)
-            temp2 = self.remove_stopword(temp1)
-            preprocessed_senteces.append(temp2)
+    '''
+    :param sentences: txt 형식의 뉴스 기사
+    :return: 전처리가 완료된 이중 리스트 형태의 단어들
+    '''
+    df = self.read_file(filename)
+    sentences = df.iloc[:, 3]
+    preprocessed_senteces = []
+    for sentence in sentences:
+        if type(sentence)!=str:
+            continue
+        temp = self.cleanText(sentence)
+        temp1 = self.extract_nouns(temp)
+        temp2 = self.remove_stopword(temp1)
+        preprocessed_senteces.append(temp2)
 
-        return preprocessed_senteces
-        
+    return preprocessed_senteces
 </pre></code>
 
 - How to use
@@ -73,4 +83,15 @@ document에 존재하는 단어들이 어떤 topic에 속할 확률이 가장 �
 - To do
 > 각 토픽을 대표하는 문서를 추출하는 방법을 찾아야 함
 > 각 토픽에서 단어들을 보고 이슈(주제)를 명명할 근거를 찾아야 함
+
+
+### 0.4 extractive_summarizer.py 
+--------------------------
+[edubey/text_summarizer](https://github.com/edubey/text-summarizer)의 깃헙을 참고하여 수정하였습니다. 
+
+뉴스 기사 하나의 본문에 대한 내용을 원하는 수의 문장으로 요약
+
+해당 스크립트 하나만 실행하면 요약 결과 제시
+
+자세한 내용을 알고 싶으신 분들은 [본 깃헙내 설명글](https://github.com/Hanseok-Oh/Text_Summarization/tree/master/%5B10%5Dcode/edubey_text_summarizer)을 참조해주세요.
 

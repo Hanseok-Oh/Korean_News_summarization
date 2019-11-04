@@ -36,5 +36,5 @@ def define_argparser():
 
   1. git clone https://github.com/Hanseok-Oh/Korean_News_summarization.git
   2. move to directory
-  3. <b> python main.py --query 현대자동차 </b>
+  3. <b> python main.py --query <i>검색어</i> </b>
 

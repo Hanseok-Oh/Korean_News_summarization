@@ -26,8 +26,8 @@ class Crawling:
                  encoding='utf-8')
         while page < maxpage_t:
             print("page:", page)
-            # 관련도순 정렬 - query 날짜와 다를 수도 있음 / 수정 필요 부분
-            url = "https://search.naver.com/search.naver?where=news&query=" + self.query + "&sort=0&ds=" + self.s_date + "&de=" + self.e_date + "&nso=so%3Adr%2Cp%3Afrom" + s_from + "to" + e_to + "%2Ca%3A&start=" + str(
+            # 관련도순 정렬 - query 날짜와 다를 수도 있음 / 수정 필요 부분 -> 최신순: "&nso=so%3Add%2Cp%3Afrom" / 관련도순: "&nso=so%3Ar%2Cp%3Afrom"
+            url = "https://search.naver.com/search.naver?where=news&query=" + self.query + "&sort=0&ds=" + self.s_date + "&de=" + self.e_date + "&nso=so%3Add%2Cp%3Afrom" + s_from + "to" + e_to + "%2Ca%3A&start=" + str(
                 page)
             req = requests.get(url)
             print(url)

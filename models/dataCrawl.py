@@ -9,43 +9,47 @@ import os
 
 
 class Crawling:
-    def __init__(self, max_page, query, s_date, e_date, result_path):
+    def __init__(self, query, s_date, e_date, result_path):
         self.result_path = result_path + '/data'
-        self.max_page = max_page
         self.query = query
         self.s_date = s_date
         self.e_date = e_date
         print("crawling: ", self.query)
 
-    def crawler(self):
+    def crawler(self, page):
         s_from = self.s_date.replace(",", "")
         e_to = self.e_date.replace(",", "")
-        page = 1
-        maxpage_t = (int(self.max_page) - 1) * 10 + 1  # 11= 2페이지 21=3페이지 31=4페이지 ...81=9페이지 , 91=10페이지, 101=11페이지
-        f = open(self.result_path + '/{}_contents_text.txt'.format(self.query), 'w',
+        query = self.query
+        f = open(self.result_path + '/{}_contents_text.txt'.format(self.query), 'a',
                  encoding='utf-8')
-        while page < maxpage_t:
-            print("page:", page)
-            # 관련도순 정렬 - query 날짜와 다를 수도 있음 / 수정 필요 부분 -> 최신순: "&nso=so%3Add%2Cp%3Afrom" / 관련도순: "&nso=so%3Ar%2Cp%3Afrom"
-            url = "https://search.naver.com/search.naver?where=news&query=" + self.query + "&sort=0&ds=" + self.s_date + "&de=" + self.e_date + "&nso=so%3Add%2Cp%3Afrom" + s_from + "to" + e_to + "%2Ca%3A&start=" + str(
-                page)
-            req = requests.get(url)
-            print(url)
-            cont = req.content
-            soup = BeautifulSoup(cont, 'html.parser')  # print(soup)
-            for urls in soup.select("._sp_each_url"):
-                try:
-                    if urls["href"].startswith("https://news.naver.com"):
-                        news_detail = self.get_news(urls["href"])
-                        # pdate, pcompany, title, btext
-                        f.write(
-                            "{}\t{}\t{}\t{}\t{}\n".format(news_detail[1], news_detail[4], news_detail[0],
-                                                          news_detail[2],
-                                                          news_detail[3]))  # new style
-                except Exception as e:
-                    print(e)
-                    continue
-            page += 10
+
+        url = "https://search.naver.com/search.naver?where=news&query=" + query + "&sm=tab_pge&sort=0&photo=0&field=0&reporter_article=&pd=3&ds=" + self.s_date + "&de=" + self.e_date + "&docid=&nso=so:r,p:from" + s_from + "to" + e_to + "%2Ca%3A&start=" + str(page)
+
+        req = requests.get(url)
+        cont = req.content
+        soup = BeautifulSoup(cont, 'html.parser')
+
+        for urls in soup.select("._sp_each_url"):
+            try:
+                if urls["href"].startswith("https://news.naver.com"):
+                    news_detail = self.get_news(urls["href"])
+                    reversed_content_2 = ''.join(reversed(news_detail[2]))
+                    for i in range(0, len(reversed_content_2)):
+                        if reversed_content_2[i:i + 2] == '.다':
+                            news_detail[2] = ''.join(reversed(reversed_content_2[i:]))
+                            break
+                    for i in range(0, int(len(news_detail[2]) / 3)):
+                        if news_detail[2][i:i+3] == '기자]' or news_detail[2][i:i+3] == '자 =':
+                            news_detail[2] = news_detail[2][i+3:]
+                            break
+
+                    f.write(
+                        "{}\t{}\t{}\t{}\t{}\n".format(news_detail[1], news_detail[4], news_detail[0],
+                                                      news_detail[2],
+                                                      news_detail[3]))  # new style
+            except Exception as e:
+                print(e)
+                continue
         f.close()
         return
 
@@ -69,11 +73,11 @@ class Crawling:
         data = pd.read_csv(self.result_path + '/{}_contents_text.txt'.format(query), sep='\t', header=None,
                            error_bad_lines=False)
         data.columns = ['years', 'company', 'title', 'contents', 'link']
-        xlsx_outputFileName = '{}.xlsx'.format(query)
+        xlsx_outputFileName = '{} .xlsx'.format(query)
         data.to_excel(self.result_path + '/crawling_' + xlsx_outputFileName, encoding='utf-8')
         return
 
-    def main(self):
-        self.crawler()  # 검색된 네이버뉴스의 기사내용을 크롤링합니다.
-        self.excel_make(self.query, self.s_date + '~' + self.e_date)  # 엑셀로 만들기
+    def main(self, page):
+        self.crawler(page)
+        self.excel_make(self.query, self.s_date + '~' + self.e_date)
         return

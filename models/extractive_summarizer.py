@@ -6,6 +6,8 @@ import networkx as nx
 import re
 import pandas as pd
 import argparse
+from konlpy.tag import Hannanum
+
 
 def read_data(filename, encoding='utf-8'):
     # stop_word_list.txt를 부르기 위해서 사용
@@ -24,23 +26,36 @@ class Summarizer:
         data = pd.read_excel(file_name)
         content_data = data.loc[:, 'contents']
         filedata = content_data[index] # indexing으로 원하는 기사 접근 가능
-        article = filedata.split(".")
 
-        sentences = []
-        removed = []
+        temp = filedata
+        print("\n\norigin :",temp)
+        if ']' in temp[:len(temp) // 2]:
+            temp = temp.split(']')[1:]  # 기사 앞 [기자이름] 부분 제거
+            temp = ' '.join(temp)
 
-        # print("article: ", article)
+        if '@' in temp:
+            temp = temp.split('@')[:-1]  # 기사 앞 [기자이름] 부분 제거
+            temp = ' '.join(temp)
+
+        if '.' in temp:
+            temp = temp.split('.')[:-1]
+            temp = '. '.join(temp)
+            sentence = temp
+
+        temp= re.sub('[-=+,#/\?:^$@*\"※~&%ㆍ!』\’\\‘|\(\)\[\]\<\>`\'…》ⓒ▶]', '', sentence)
+        article = temp.split('.')
+
+        # print("\nthe end:",article)
+        result =[]
         for sentence in article:
-            # print("sentence check: ",sentence)
-            if sentence == '':
-                continue
-            hangul = re.compile('[^가-힣a-zA-Z0-9_]+')  # 정교화 필요
-            sentences.append(hangul.sub('', sentence).split(" "))
-            removed.append(hangul.findall(sentence))  # 제거된 단어들 확인 필요 시 return에 추가
+            temp=[]
+            for token in sentence.split():
+                if token!='':
+                    temp.append(token)
+            result.append(temp)
 
-        print("sentences:", sentences)
-        # print("removed: ",removed)
-        return sentences
+        # print("\nresult: ",result)
+        return result
 
 
     def sentence_similarity(self,sent1, sent2, stopwords=None):
@@ -67,6 +82,7 @@ class Summarizer:
                 continue
             vector2[all_words.index(w)] += 1
 
+
         return 1 - cosine_distance(vector1, vector2)
 
 
@@ -91,8 +107,15 @@ class Summarizer:
         # Step 1 - Read text anc split it
         sentences = self.read_article(file_name,index)
 
+        #token화 추가
+        hannanum = Hannanum()
+        temp = []
+        for sentence in sentences:
+            temp.append(hannanum.nouns(' '.join(sentence)))
+        # print("temp:",temp)
+
         # Step 2 - Generate Similary Martix across sentences
-        sentence_similarity_martix = self.build_similarity_matrix(sentences, stop_words)
+        sentence_similarity_martix = self.build_similarity_matrix(temp, stop_words)
 
         # Step 3 - Rank sentences in similarity martix
         sentence_similarity_graph = nx.from_numpy_array(sentence_similarity_martix)
@@ -104,8 +127,11 @@ class Summarizer:
             summarize_text.append(" ".join(ranked_sentence[i][1]))
 
         # Step 5 - Offcourse, output the summarize text
-        # print("\nsummarize Text:\n",summarize_text)
         print("\nSummarize Text: \n", ". ".join(summarize_text))
 
     def main(self,args):
         self.generate_summary('data/crawling_{}.xlsx'.format(args.query),args.index, args.number)
+
+
+# 길이에 대한 normalize
+# 벡터화 시 TFIDF 기반으로 가중치를 준다.

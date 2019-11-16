@@ -47,16 +47,36 @@ class Processing:
         '''
         df = self.read_file(filename)
         sentences = df.iloc[:, 3]
-        preprocessed_senteces = []
+        preprocessed_sentences = []
+
         for sentence in sentences:
             if type(sentence)!=str:
                 continue
+            # print("\n\n\n sentence: ", type(sentence), sentence,)
+            temp =sentence
+
+            if ']' in temp[:len(temp)//2]:
+                temp = temp.split(']')[1:]  # 기사 앞 [기자이름] 부분 제거
+                temp = ' '.join(temp)
+                # print("-----------------------------")
+                # print("temp ] processed: ", temp)
+
+            if '@' in temp:
+                temp = temp.split('@')[:-1]  # 기사 앞 [기자이름] 부분 제거
+                temp = ' '.join(temp)
+                # print("-----------------------------")
+                # print("temp @ processed: ", temp)
+
+            if '.' in temp:
+                temp = temp.split('.')[:-1]
+                temp = '. '.join(temp)
+                sentence = temp
+                # print("-----------------------------")
+                # print("sentence  . processed: ", sentence)
+
             temp = self.cleanText(sentence)
             temp1 = self.extract_nouns(temp)
             temp2 = self.remove_stopword(temp1)
-            preprocessed_senteces.append(temp2)
+            preprocessed_sentences.append(temp2)
 
-        return preprocessed_senteces
-
-# 전처리 프로세스 : input sentence -> lemmatization-> 정규표현식으로 특수문자 제거 / stopword제거 -> 사용할 품사만 추출
-# 현재 : input sentence -> 특수문자 제거 -> 명사추출 -> 불용어 제거
+        return preprocessed_sentences

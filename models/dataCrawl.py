@@ -73,7 +73,7 @@ class Crawling:
         data = pd.read_csv(self.result_path + '/{}_contents_text.txt'.format(query), sep='\t', header=None,
                            error_bad_lines=False)
         data.columns = ['years', 'company', 'title', 'contents', 'link']
-        xlsx_outputFileName = '{} .xlsx'.format(query)
+        xlsx_outputFileName = '{}.xlsx'.format(query)
         data.to_excel(self.result_path + '/crawling_' + xlsx_outputFileName, encoding='utf-8')
         return
 

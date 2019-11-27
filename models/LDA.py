@@ -4,7 +4,6 @@ https://gist.github.com/ratsgo/c68296fa65420f6d2d970781f02f5420
 '''
 import random
 from collections import Counter
-from models.preprocess import Processing
 
 class ModelLDA:
     def __init__(self,documents):
@@ -64,7 +63,4 @@ class ModelLDA:
                     self.topic_word_counts[new_topic][word] += 1
                     self.topic_counts[new_topic] += 1
                     self.document_lengths[d] += 1
-
-
-
 

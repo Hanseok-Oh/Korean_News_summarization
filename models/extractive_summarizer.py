@@ -128,9 +128,12 @@ class Summarizer:
 
         # Step 5 - Offcourse, output the summarize text
         print("\nSummarize Text: \n", ". ".join(summarize_text))
+        return ". ".join(summarize_text)
 
-    def main(self,args):
-        self.generate_summary('data/crawling_{}.xlsx'.format(args.query),args.index, args.number)
+    # def main(self,args):
+    #     return self.generate_summary(args.result_path+'/data/crawling_{}.xlsx'.format(args.query),args.index, args.number)
+    def main2(self,file_name,index,number):
+        return self.generate_summary(file_name,index, number)
 
 
 # 길이에 대한 normalize

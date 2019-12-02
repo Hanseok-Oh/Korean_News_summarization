@@ -20,7 +20,7 @@ class Crawling:
         s_from = self.s_date.replace(",", "")
         e_to = self.e_date.replace(",", "")
         query = self.query
-        f = open(self.result_path + '/{}_contents_text.txt'.format(self.query), 'a',
+        f = open(self.result_path + '/{}/contents.txt'.format(self.query), 'a',
                  encoding='utf-8')
 
         url = "https://search.naver.com/search.naver?where=news&query=" + query + "&sm=tab_pge&sort=0&photo=0&field=0&reporter_article=&pd=3&ds=" + self.s_date + "&de=" + self.e_date + "&docid=&nso=so:r,p:from" + s_from + "to" + e_to + "%2Ca%3A&start=" + str(page)
@@ -43,10 +43,16 @@ class Crawling:
                             news_detail[2] = news_detail[2][i+3:]
                             break
 
+
+                    if 'https://news.naver.com/main/read.nhn?mode=LSD&mid=sec&sid1=101&oid=024&aid=0000061805' in news_detail:
+                        news_detail[2] = news_detail[2].replace('\r', '')
+                        # pass
+                    if len(news_detail[2].split('.'))<3:
+                        continue
                     f.write(
                         "{}\t{}\t{}\t{}\t{}\n".format(news_detail[1], news_detail[4], news_detail[0],
                                                       news_detail[2],
-                                                      news_detail[3]))  # new style
+                                                      news_detail[3]))  # years, company, title, contents, link
             except Exception as e:
                 print(e)
                 continue
@@ -69,15 +75,15 @@ class Crawling:
         news_detail.append(pcompany)
         return news_detail
 
-    def excel_make(self, query, date):
-        data = pd.read_csv(self.result_path + '/{}_contents_text.txt'.format(query), sep='\t', header=None,
+    def excel_make(self, query):
+        data = pd.read_csv(self.result_path + '/{}/contents.txt'.format(query), sep='\t', header=None,
                            error_bad_lines=False)
         data.columns = ['years', 'company', 'title', 'contents', 'link']
-        xlsx_outputFileName = '{}.xlsx'.format(query)
-        data.to_excel(self.result_path + '/crawling_' + xlsx_outputFileName, encoding='utf-8')
+        out_file = self.result_path + '/{}/'.format(query) + 'crawling.xlsx'
+        data.to_excel(out_file, encoding='utf-8')
         return
 
     def main(self, page):
         self.crawler(page)
-        self.excel_make(self.query, self.s_date + '~' + self.e_date)
+        self.excel_make(self.query)
         return

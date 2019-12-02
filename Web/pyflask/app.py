@@ -3,7 +3,7 @@ import sys
 import os
 print("here!:",os.getcwd())
 sys.path.insert(0, "C:/Users/rnfek/hanseok/Korean_News_summarization")
-from main2 import main
+from web_main import main
 import easydict
 
 app = Flask(__name__)

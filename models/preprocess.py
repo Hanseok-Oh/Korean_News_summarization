@@ -18,7 +18,7 @@ class Processing:
 
     def read_file(self,filename):
         # data 구조 : 날짜, 언론사, 제목, 본문, 링크
-        df = pd.read_csv(filename, sep='\t', names=['date', 'company', 'title', 'body', 'link'])
+        df = pd.read_excel(filename, index_col=0)
         return df
 
     def cleanText(self,sentence):
@@ -34,8 +34,9 @@ class Processing:
     def remove_stopword(self,tokened_sentence):
         # 미리 불러온 stop_words 리스트 안에 있는 단어일 경우 제거
         stopped_sentence = []
+        stopwords = sum(self.stop_words,[])
         for word in tokened_sentence:
-            if word in self.stop_words:
+            if word in stopwords:
                 continue
             stopped_sentence.append(word)
         return stopped_sentence
@@ -47,6 +48,7 @@ class Processing:
         :return: 전처리가 완료된 이중 리스트 형태의 단어들
         '''
         df = self.read_file(filename)
+        print("preprocess -input file length:",len(df))
         sentences = df.iloc[:, 3]
         preprocessed_sentences = []
 
@@ -59,21 +61,15 @@ class Processing:
             if ']' in temp[:len(temp)//2]:
                 temp = temp.split(']')[1:]  # 기사 앞 [기자이름] 부분 제거
                 temp = ' '.join(temp)
-                # print("-----------------------------")
-                # print("temp ] processed: ", temp)
 
             if '@' in temp:
                 temp = temp.split('@')[:-1]  # 기사 앞 [기자이름] 부분 제거
                 temp = ' '.join(temp)
-                # print("-----------------------------")
-                # print("temp @ processed: ", temp)
 
             if '.' in temp:
                 temp = temp.split('.')[:-1]
                 temp = '. '.join(temp)
                 sentence = temp
-                # print("-----------------------------")
-                # print("sentence  . processed: ", sentence)
 
             temp = self.cleanText(sentence)
             temp1 = self.extract_nouns(temp)

@@ -22,30 +22,38 @@ class Summarizer:
 
     def read_article(self,file_name,index):
         # method2
-        # target = '삼성생명'
         data = pd.read_excel(file_name)
         content_data = data.loc[:, 'contents']
         filedata = content_data[index] # indexing으로 원하는 기사 접근 가능
 
         temp = filedata
-        print("\n\norigin :",temp)
+        # print("\n\norigin :",temp)
         if ']' in temp[:len(temp) // 2]:
             temp = temp.split(']')[1:]  # 기사 앞 [기자이름] 부분 제거
             temp = ' '.join(temp)
 
         if '@' in temp:
-            temp = temp.split('@')[:-1]  # 기사 앞 [기자이름] 부분 제거
+            temp = temp.split('@')[:-1]  # 기사 뒤 메일 부분 제거
             temp = ' '.join(temp)
 
-        if '.' in temp:
-            temp = temp.split('.')[:-1]
-            temp = '. '.join(temp)
-            sentence = temp
+        if '=' in temp:
+            temp = temp.split('=')[:-1]  # 기사 앞 회사이름 부분 제거
+            temp = ' '.join(temp)
 
+
+        # if '.' in temp:
+        #     temp = temp.split('.')[:-1] # 기사 뒤 광고 제거
+        #     temp = '. '.join(temp)
+        #     sentence = temp
+
+        sentence =temp
         temp= re.sub('[-=+,#/\?:^$@*\"※~&%ㆍ!』\’\\‘|\(\)\[\]\<\>`\'…》ⓒ▶]', '', sentence)
-        article = temp.split('.')
 
-        # print("\nthe end:",article)
+        # import re
+        # re.
+        # article = temp.split('다.')
+        article = [sentence+'다' for sentence in temp.split('다.')]
+
         result =[]
         for sentence in article:
             temp=[]
@@ -82,11 +90,16 @@ class Summarizer:
                 continue
             vector2[all_words.index(w)] += 1
 
+        result = round(1 - cosine_distance(vector1, vector2),5)
+        # print("type:",type(result))
+        if not(result>=0):
+            return 0
+        else:
+            return result
+        # return round(1 - cosine_distance(vector1, vector2),5)
 
-        return 1 - cosine_distance(vector1, vector2)
 
-
-    def build_similarity_matrix(self,sentences, stop_words):
+    def build_similarity_matrix(self, sentences, stopwords):
         # Create an empty similarity matrix
         similarity_matrix = np.zeros((len(sentences), len(sentences)))
 
@@ -94,14 +107,14 @@ class Summarizer:
             for idx2 in range(len(sentences)):
                 if idx1 == idx2:  # ignore if both are same sentences
                     continue
-                similarity_matrix[idx1][idx2] = self.sentence_similarity(sentences[idx1], sentences[idx2], stop_words)
+                similarity_matrix[idx1][idx2] = self.sentence_similarity(sentences[idx1], sentences[idx2], stopwords)
 
         return similarity_matrix
 
 
-    def generate_summary(self,file_name, index,top_n=5):
-        stop_words = read_data(filename='korean_stopwords_list.txt')
-
+    def generate_summary(self,file_name,top_n,index):
+        stopwords = read_data(filename='korean_stopwords_list.txt')
+        stopwords = sum(stopwords,[])
         summarize_text = []
 
         # Step 1 - Read text anc split it
@@ -112,27 +125,43 @@ class Summarizer:
         temp = []
         for sentence in sentences:
             temp.append(hannanum.nouns(' '.join(sentence)))
-        # print("temp:",temp)
 
         # Step 2 - Generate Similary Martix across sentences
-        sentence_similarity_martix = self.build_similarity_matrix(temp, stop_words)
-
+        sentence_similarity_martix = self.build_similarity_matrix(temp, stopwords)
         # Step 3 - Rank sentences in similarity martix
         sentence_similarity_graph = nx.from_numpy_array(sentence_similarity_martix)
-        scores = nx.pagerank(sentence_similarity_graph)
+        # 12/2 edit.
+        is_okay= True
+        max_iter =500
+        while is_okay:
+            try:
+                scores = nx.pagerank(sentence_similarity_graph,max_iter=max_iter)
+                is_okay = False
+            except:
+                print("max_iter + 100:",max_iter)
+                max_iter+=100
 
         # Step 4 - Sort the rank and pick top sentences
         ranked_sentence = sorted(((scores[i], s) for i, s in enumerate(sentences)), reverse=True)
+        # 11/29 수정
+        summarize_text.append(' '.join(sentences[0]))
         for i in range(top_n):
+            if len(ranked_sentence) <= i:
+                break
+
+            if ranked_sentence[i][1]==sentences[0]:
+                print("\nalready first sentence is in summarize result")
+                continue
             summarize_text.append(" ".join(ranked_sentence[i][1]))
 
         # Step 5 - Offcourse, output the summarize text
-        print("\nSummarize Text: \n", ". ".join(summarize_text))
+        print("\nSummarize Text of index-{}: \n".format(index), ". ".join(summarize_text))
         return ". ".join(summarize_text)
 
-    # def main(self,args):
-    #     return self.generate_summary(args.result_path+'/data/crawling_{}.xlsx'.format(args.query),args.index, args.number)
-    def main2(self,file_name,index,number):
+    def main(self,args):
+        return self.generate_summary(args.result_path+'/data/{}/crawling.xlsx'.format(args.query),args.number,args.index)
+
+    def mainForWeb(self,file_name,index,number):
         return self.generate_summary(file_name,index, number)
 
 

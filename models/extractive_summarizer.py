@@ -40,11 +40,10 @@ class Summarizer:
             temp = temp.split('=')[:-1]  # 기사 앞 회사이름 부분 제거
             temp = ' '.join(temp)
 
-
-        # if '.' in temp:
-        #     temp = temp.split('.')[:-1] # 기사 뒤 광고 제거
-        #     temp = '. '.join(temp)
-        #     sentence = temp
+        if '.' in temp:
+            temp = temp.split('.')[:-1] # 기사 뒤 광고 제거
+            temp = '. '.join(temp)
+            sentence = temp
 
         sentence =temp
         temp= re.sub('[-=+,#/\?:^$@*\"※~&%ㆍ!』\’\\‘|\(\)\[\]\<\>`\'…》ⓒ▶]', '', sentence)

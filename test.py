@@ -1,22 +1,12 @@
-# coding=utf-8
-# {}_요약.txt 파일에서 문서별로 배정된 key& 인덱스 정보를 파악
+import pandas as pd
+import os
+filename = os.getcwd()+'/data/{}/crawling.xlsx'.format('현대자동차')
+df = pd.read_excel(filename,index_col =0)
+# print(df.columns)
+# print(df.head())
 
-# f = open('data/삼성생명_요약.txt','r',encoding='utf-8')
-# lines = f.readlines()
-# temp = []
-# for line in lines:
-#     if 'key' in line:
-#         print(line)
-#         temp.append((line[0],line[-2]))
-#
-# print("temp: ",temp)
-#
-from collections import Counter
 
-cnt = Counter()
-for word in ['red', 'blue', 'red', 'green', 'blue', 'blue']:
-    cnt[word] += 1
-
-print(cnt)
-print(cnt.most_common(1))
-print(cnt.most_common(1)[0][0])
+from nltk.cluster.util import cosine_distance
+vector1 =[0,0,1,0,1,1,1]
+vector2 =[0,0,1,0,1,4,0]
+print(round(1 - cosine_distance(vector1, vector2),5))

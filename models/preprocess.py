@@ -61,21 +61,15 @@ class Processing:
             if ']' in temp[:len(temp)//2]:
                 temp = temp.split(']')[1:]  # 기사 앞 [기자이름] 부분 제거
                 temp = ' '.join(temp)
-                # print("-----------------------------")
-                # print("temp ] processed: ", temp)
 
             if '@' in temp:
                 temp = temp.split('@')[:-1]  # 기사 앞 [기자이름] 부분 제거
                 temp = ' '.join(temp)
-                # print("-----------------------------")
-                # print("temp @ processed: ", temp)
 
             if '.' in temp:
                 temp = temp.split('.')[:-1]
                 temp = '. '.join(temp)
                 sentence = temp
-                # print("-----------------------------")
-                # print("sentence  . processed: ", sentence)
 
             temp = self.cleanText(sentence)
             temp1 = self.extract_nouns(temp)

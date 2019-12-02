@@ -1,7 +1,10 @@
 #folder
 `:
 
-models/_pycache_
+models/__pycache__
+.idea
+__pycache__
+Web/
 
 #file
 test.py

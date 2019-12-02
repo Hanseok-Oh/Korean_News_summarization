@@ -1,66 +1,96 @@
-'''
-ratsgo github에서 LDA 코드를 가져와서 뉴스 데이터셋에 적용
-https://gist.github.com/ratsgo/c68296fa65420f6d2d970781f02f5420
-'''
-import random
-from collections import Counter
+import konlpy
+from konlpy.tag import Okt
+import gensim
+from gensim import corpora
+import pyLDAvis.gensim
+import os
+from gensim.models.coherencemodel import CoherenceModel
+from tqdm import tqdm
+import pandas as pd
+import warnings
+warnings.filterwarnings('ignore')
+# from preprocess import Processing
 
-class ModelLDA:
-    def __init__(self,documents):
-        self.seed = random.seed(0)
-        self.K = 4
-        self.documents = documents
-        self.document_topics = [[random.randrange(self.K) for word in document]
-                           for document in self.documents]
-        self.document_topic_counts = [Counter() for _ in self.documents]
-        self.topic_word_counts = [Counter() for _ in range(self.K)]
-        self.topic_counts = [0 for _ in range(self.K)]
-        self.document_lengths = [len(document) for document in self.documents]
-        self.distinct_words = set(word for document in self.documents for word in document)
-        self.V = len(self.distinct_words)
-        self.D = len(self.documents)
 
-    def p_topic_given_document(self,topic, d, alpha=0.1):
-        return ((self.document_topic_counts[d][topic] + alpha) /
-                (self.document_lengths[d] + self.K * alpha))
 
-    def p_word_given_topic(self,word, topic, beta=0.1):
-        return ((self.topic_word_counts[topic][word] + beta) /
-                (self.topic_counts[topic] + self.V * beta))
+class LDA:
+    def __init__(self, processed_data, passes=30, limit=12, start=3, step=2):
+        self.texts = processed_data
+        self.passes = passes
+        self.dictionary = corpora.Dictionary(processed_data)
+        self.corpus = [self.dictionary.doc2bow(text) for text in processed_data]
 
-    def topic_weight(self,d, word, k):
-        return self.p_word_given_topic(word, k) * self.p_topic_given_document(k, d)
+        coherence_values = []
+        model_list = []
+        for num_topics in tqdm(range(start, limit, step),desc="LDA-find proper number of topic"):
+            model = gensim.models.ldamodel.LdaModel(self.corpus, num_topics=num_topics, id2word=self.dictionary,
+                                                    passes=self.passes, random_state=2019)
+            model_list.append(model)
+            coherencemodel = CoherenceModel(model=model, texts=self.texts, dictionary=self.dictionary, coherence='c_v')
+            coherence_values.append(coherencemodel.get_coherence())
 
-    def choose_new_topic(self,d, word):
-        return self.sample_from([self.topic_weight(d, word, k) for k in range(self.K)])
+        x = range(start, limit, step)
+        # Print the coherence scores
 
-    def sample_from(self,weights):
-        total = sum(weights)
-        rnd = total * random.random()
-        for i, w in enumerate(weights):
-            rnd -= w
-            if rnd <= 0:
-                return i
+        for m, cv in zip(x, coherence_values):
+            print("Num Topics =", m, " has Coherence Value of", round(cv, 4))
 
-    def main(self):
-        for d in range(self.D):
-            for word, topic in zip(self.documents[d], self.document_topics[d]):
-                self.document_topic_counts[d][topic] += 1
-                self.topic_word_counts[topic][word] += 1
-                self.topic_counts[topic] += 1
+        self.best_topic_num = x[coherence_values.index(max(coherence_values))]
+        # self.best_topic_num = 2
 
-        for iter in range(1000):
-            for d in range(self.D):
-                for i, (word, topic) in enumerate(zip(self.documents[d],
-                                                      self.document_topics[d])):
-                    self.document_topic_counts[d][topic] -= 1
-                    self.topic_word_counts[topic][word] -= 1
-                    self.topic_counts[topic] -= 1
-                    self.document_lengths[d] -= 1
-                    new_topic = self.choose_new_topic(d, word)
-                    self.document_topics[d][i] = new_topic
-                    self.document_topic_counts[d][new_topic] += 1
-                    self.topic_word_counts[new_topic][word] += 1
-                    self.topic_counts[new_topic] += 1
-                    self.document_lengths[d] += 1
+        print("\nbest topic num is {}".format(self.best_topic_num))
+
+    def selected_model(self):
+        ldamodel = gensim.models.ldamodel.LdaModel(self.corpus, num_topics= self.best_topic_num, id2word=self.dictionary,
+                                                   passes=self.passes, random_state=2019)
+        vis = pyLDAvis.gensim.prepare(ldamodel, self.corpus, self.dictionary)
+        return ldamodel, vis
+
+    def format_topics_sentences(self, ldamodel,query):
+        # Init output
+        sent_topics_df = pd.DataFrame()
+
+        # Get main topic in each document
+        for i, row in enumerate(ldamodel[self.corpus]):
+            row = sorted(row, key=lambda x: (x[1]), reverse=True)
+            # Get the Dominant topic, Perc Contribution and Keywords for each document
+            for j, (topic_num, prop_topic) in enumerate(row):
+                if j == 0:  # => dominant topic
+                    wp = ldamodel.show_topic(topic_num)
+                    topic_keywords = ", ".join([word for word, prop in wp if word != query])
+                    # print("topic keywords:",topic_keywords)
+                    sent_topics_df = sent_topics_df.append(
+                        pd.Series([int(topic_num+1), round(prop_topic, 4), topic_keywords]), ignore_index=True)
+                else:
+                    break
+        sent_topics_df.columns = ['Dominant_Topic', 'Perc_Contribution', 'Topic_Keywords']
+
+        # Add original text to the end of the output
+        contents = pd.Series(self.texts)
+        assert len(contents) == len(sent_topics_df)
+        sent_topics_df = pd.concat([sent_topics_df, contents], axis=1).reset_index()
+        sent_topics_df.columns = ['Document_No', 'Dominant_Topic', 'Topic_Perc_Contrib', 'Keywords', 'Text']
+        sent_topics_df = sent_topics_df.set_index('Document_No')
+        print("After LDA format topics sentence-input file length:", len(sent_topics_df))
+
+        return sent_topics_df
+
+    def extract_index_per_topic(self, ldamodel,query):
+        df_topic_sents_keywords = self.format_topics_sentences(ldamodel,query)
+
+        # Group top 5 sentences under each topic
+        sent_topics_sorteddf = pd.DataFrame()
+        sent_topics_outdf_grpd = df_topic_sents_keywords.groupby('Dominant_Topic')
+
+        for i, grp in sent_topics_outdf_grpd:
+            best_grp = grp.sort_values(['Topic_Perc_Contrib'], ascending=False)
+
+            sent_topics_sorteddf = pd.concat([sent_topics_sorteddf,
+                                              best_grp.head(1)],
+                                             axis=0)
+        # Format
+        sent_topics_sorteddf.columns = ['Topic_Num', "Topic_Perc_Contrib", "Keywords", "Text"]
+        print("After LDA extract index per topic -input file length:", len(sent_topics_sorteddf))
+        return sent_topics_sorteddf
+
 

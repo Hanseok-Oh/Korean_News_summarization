@@ -1,5 +1,13 @@
 #folder
 `:
+
+models/_pycache_
+
 #file
 test.py
 ~$crawling_*
+models/README.md
+README.md
+test.py
+
+

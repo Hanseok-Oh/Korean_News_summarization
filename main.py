@@ -56,7 +56,7 @@ def main(args):
     f= open(args.result_path+'/data/{}/summary.txt'.format(args.query),'a',encoding='utf-8')
     for i,index in enumerate(target_index):
         f.write("Summarize Text of topic-{},index-{}: \n".format(i,index))
-        f.write(s.generate_summary(args.result_path+'/data/{}/crawling.xlsx'.format(args.query),args.number,index),'\n')
+        f.write(s.generate_summary(args.result_path+'/data/{}/crawling.xlsx'.format(args.query),args.number,index) + '\n')
     f.close()
     return
 
@@ -76,7 +76,7 @@ if __name__ =='__main__':
         s = Summarizer()
         target_index = pd.read_excel(args.result_path+'/data/{}/lda_best.xlsx'.format(args.query),index_col=0).index
         print("target index:",target_index)
-        f = open(args.result_path + '/data/{}/summary.txt'.format(args.query),'w')
+        f = open(args.result_path + '/data/{}/summary.txt'.format(args.query),'w', encoding='utf-8')
         for topic,index in enumerate(target_index):
             f.write("Summarize Text of topic - {}, index-{}: \n".format(topic+1,index))
             f.write(s.generate_summary(args.result_path+'/data/{}/crawling.xlsx'.format(args.query),args.number,index)+'\n\n')

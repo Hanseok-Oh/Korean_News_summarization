@@ -191,4 +191,4 @@ test.py
 ~$crawling_*
 models/README.md
 README.md
-
+models/__pycache__

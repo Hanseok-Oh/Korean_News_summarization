@@ -184,6 +184,7 @@ $RECYCLE.BIN/
 .idea
 __pycache__
 Web/
+data/
 
 #file
 test.py

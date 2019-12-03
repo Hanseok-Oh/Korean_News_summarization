@@ -56,7 +56,7 @@ def main(args):
     f= open(args.result_path+'/data/{}/summary.txt'.format(args.query),'a',encoding='utf-8')
     for i,index in enumerate(target_index):
         f.write("Summarize Text of topic-{},index-{}: \n".format(i,index))
-        f.write(s.generate_summary(args.result_path+'/data/{}/crawling.xlsx'.format(args.query),args.number,index),'\n')
+        f.write(s.generate_summary(args.result_path+'/data/{}/crawling.xlsx'.format(args.query),args.number,index)+'\n')
     f.close()
     return
 

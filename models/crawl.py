@@ -54,7 +54,7 @@ class Crawling:
                                                       news_detail[2],
                                                       news_detail[3]))  # years, company, title, contents, link
             except Exception as e:
-                print(e)
+                # print(e)
                 continue
         f.close()
         return

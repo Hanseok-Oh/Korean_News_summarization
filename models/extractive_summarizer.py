@@ -48,9 +48,6 @@ class Summarizer:
         sentence =temp
         temp= re.sub('[-=+,#/\?:^$@*\"※~&%ㆍ!』\’\\‘|\(\)\[\]\<\>`\'…》ⓒ▶]', '', sentence)
 
-        # import re
-        # re.
-        # article = temp.split('다.')
         article = [sentence+'다' for sentence in temp.split('다.')]
 
         result =[]

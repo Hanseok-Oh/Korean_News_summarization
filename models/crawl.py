@@ -5,8 +5,6 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-import os
-
 
 class Crawling:
     def __init__(self, query, s_date, e_date, result_path):
@@ -17,8 +15,8 @@ class Crawling:
         print("crawling: ", self.query)
 
     def crawler(self, page):
-        s_from = self.s_date.replace(",", "")
-        e_to = self.e_date.replace(",", "")
+        s_from = self.s_date.replace(".", "")
+        e_to = self.e_date.replace(".", "")
         query = self.query
         f = open(self.result_path + '/{}/contents.txt'.format(self.query), 'a',
                  encoding='utf-8')

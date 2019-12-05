@@ -1,9 +1,6 @@
-import konlpy
-from konlpy.tag import Okt
 import gensim
 from gensim import corpora
 import pyLDAvis.gensim
-import os
 from gensim.models.coherencemodel import CoherenceModel
 from tqdm import tqdm
 import pandas as pd
@@ -54,6 +51,7 @@ class LDA:
         for i, row in enumerate(ldamodel[self.corpus]):
             row = sorted(row, key=lambda x: (x[1]), reverse=True)
             # Get the Dominant topic, Perc Contribution and Keywords for each document
+            # print("row of index-{}:\n".format(i),row)
             for j, (topic_num, prop_topic) in enumerate(row):
                 if j == 0:  # => dominant topic
                     wp = ldamodel.show_topic(topic_num)

@@ -1,8 +1,6 @@
 import pandas as pd
-import konlpy
 from konlpy.tag import Hannanum
 import re
-import os
 
 def read_data(filename, encoding='utf-8'):
     # stop_word_list.txt를 부르기 위해서 사용
@@ -24,7 +22,7 @@ class Processing:
     def cleanText(self,sentence):
         # 특수문자를 제거
         assert type(sentence) == str
-        cleaned_sentence = re.sub('[-=+,#/\?:^$.@*\"※~&%ㆍ!』\’\\‘|\(\)\[\]\<\>`\'…》ⓒ▶]', '', sentence)
+        cleaned_sentence = re.sub('[-=+,#/\?:^$.@*\"※~&%ㆍ!』\’\\‘|\(\)\[\]\<\>`\'…》ⓒ▶▲ ↑↓]', '', sentence)
         return cleaned_sentence
 
     def extract_nouns(self,sentence):

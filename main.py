@@ -55,12 +55,8 @@ def main(args):
     s = Summarizer()
     f= open(args.result_path+'/data/{}/summary.txt'.format(args.query),'a',encoding='utf-8')
     for i,index in enumerate(target_index):
-        f.write("Summarize Text of topic-{},index-{}: \n".format(i,index))
-<<<<<<< HEAD
-        f.write(s.generate_summary(args.result_path+'/data/{}/crawling.xlsx'.format(args.query),args.number,index)+'\n')
-=======
+        f.write("Summarize Text of topic-{},index-{}: \n".format(i+1,index))
         f.write(s.generate_summary(args.result_path+'/data/{}/crawling.xlsx'.format(args.query),args.number,index) + '\n')
->>>>>>> b77719c37590828565e6ed128234fab35f1be085
     f.close()
     return
 
@@ -102,7 +98,7 @@ if __name__ =='__main__':
 
         c = Crawling(args.query, args.s_date, args.e_date, args.result_path)
         print("crawler multiprocessing...")
-        pool = Pool(processes=8)  # 4개의 프로세스를 사용합니다.
+        pool = Pool(processes=8)  # using 4 process for multiprocessing
         try:
             pool.map(c.main, args.page)
         except Exception as e:

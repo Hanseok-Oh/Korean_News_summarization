@@ -183,7 +183,6 @@ $RECYCLE.BIN/
 #folder
 .idea
 __pycache__
-Web/
 data/
 
 #file

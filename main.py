@@ -55,7 +55,11 @@ def main(args):
     s = Summarizer()
     f= open(args.result_path+'/data/{}/summary.txt'.format(args.query),'a',encoding='utf-8')
     for i,index in enumerate(target_index):
+<<<<<<< HEAD
         f.write("Summarize Text of topic-{},index-{}: \n".format(i+1,index))
+=======
+        f.write("Summarize Text of topic-{},index-{}: \n".format(i,index))
+>>>>>>> b77719c37590828565e6ed128234fab35f1be085
         f.write(s.generate_summary(args.result_path+'/data/{}/crawling.xlsx'.format(args.query),args.number,index) + '\n')
     f.close()
     return

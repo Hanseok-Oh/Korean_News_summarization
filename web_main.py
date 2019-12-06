@@ -20,7 +20,6 @@ def main(args):
     # e_date='2019.03.31'
 
     print("query is :", args.query)
-    # os.chdir('../../')
     print("getcwd in web_main: ", os.getcwd())
     result_path = os.getcwd().replace("\\",'/')
 

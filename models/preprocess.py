@@ -22,7 +22,8 @@ class Processing:
     def cleanText(self,sentence):
         # 특수문자를 제거
         assert type(sentence) == str
-        cleaned_sentence = re.sub('[-=+,#/\?:^$.@*\"※~&%ㆍ!』\’\\‘|\(\)\[\]\<\>`\'…》ⓒ▶▲ ↑↓]', '', sentence)
+        # cleaned_sentence = re.sub('[-=+,#/\?:^$@*\"※~&%ㆍ!』\’\‘|\(\)\[\]\<\>`\'…》ⓒ▶▲↑↓◆△]', '', sentence)
+        cleaned_sentence = re.sub('[^\w. ]', '', sentence)
         return cleaned_sentence
 
     def extract_nouns(self,sentence):
@@ -54,24 +55,28 @@ class Processing:
             if type(sentence)!=str:
                 continue
             # print("\n\n\n sentence: ", type(sentence), sentence,)
-            temp =sentence
+            # temp =sentence
 
-            if ']' in temp[:len(temp)//2]:
-                temp = temp.split(']')[1:]  # 기사 앞 [기자이름] 부분 제거
-                temp = ' '.join(temp)
+            # if ']' in temp[:len(temp)//4]:
+            #     temp = temp.split(']')[1:]  # 기사 앞 [기자이름] 부분 제거
+            #     temp = ' '.join(temp)
 
-            if '@' in temp:
-                temp = temp.split('@')[:-1]  # 기사 앞 [기자이름] 부분 제거
-                temp = ' '.join(temp)
+            # if '@' in temp[len(temp)//2:]:
+            #     temp = temp.split('@')[:-1]  # 기사 앞 [기자이름] 부분 제거
+            #     temp = ' '.join(temp)
 
-            if '.' in temp:
-                temp = temp.split('.')[:-1]
-                temp = '. '.join(temp)
-                sentence = temp
+            # if '.' in temp:
+            #     temp = temp.split('.')[:-1]
+            #     temp = '. '.join(temp)
+            #     sentence = temp
 
+            # print("origin:",sentence)
             temp = self.cleanText(sentence)
+            # print("temp:",temp)
             temp1 = self.extract_nouns(temp)
+            # print("temp1:", temp1)
             temp2 = self.remove_stopword(temp1)
+            # print("temp2:", temp)
             preprocessed_sentences.append(temp2)
 
         return preprocessed_sentences

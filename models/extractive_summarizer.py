@@ -1,11 +1,8 @@
-import nltk
-from nltk.corpus import stopwords
 from nltk.cluster.util import cosine_distance
 import numpy as np
 import networkx as nx
 import re
 import pandas as pd
-import argparse
 from konlpy.tag import Hannanum
 
 
@@ -21,32 +18,20 @@ class Summarizer:
         pass
 
     def read_article(self,file_name,index):
-        # method2
         data = pd.read_excel(file_name)
         content_data = data.loc[:, 'contents']
         filedata = content_data[index] # indexing으로 원하는 기사 접근 가능
 
         temp = filedata
-        # print("\n\norigin :",temp)
-        if ']' in temp[:len(temp) // 2]:
-            temp = temp.split(']')[1:]  # 기사 앞 [기자이름] 부분 제거
-            temp = ' '.join(temp)
 
-        if '@' in temp:
-            temp = temp.split('@')[:-1]  # 기사 뒤 메일 부분 제거
-            temp = ' '.join(temp)
-
-        if '=' in temp:
-            temp = temp.split('=')[:-1]  # 기사 앞 회사이름 부분 제거
-            temp = ' '.join(temp)
-
-        if '.' in temp:
-            temp = temp.split('.')[:-1] # 기사 뒤 광고 제거
-            temp = '. '.join(temp)
-            sentence = temp
+        for i in range(0, len(temp)//3):
+            if temp[i:i + 3] == '기자]' or temp[i:i + 3] == '자 =' or temp[i:i + 3] == ' 기자':
+                temp = temp[i + 3:]
+                break
 
         sentence =temp
-        temp= re.sub('[-=+,#/\?:^$@*\"※~&%ㆍ!』\’\\‘|\(\)\[\]\<\>`\'…》ⓒ▶]', '', sentence)
+        # temp= re.sub('[-=+,#/\?:^$*\"※~&%ㆍ!』\’\‘|\(\)\[\]\<\>`\'…》ⓒ▶▲↑↓◆△]', '', sentence)
+        temp = re.sub('[^\w. ]', '', sentence) #숫자,문자 그리고 .을 제외한 모든 특수문자 제거
 
         article = [sentence+'다' for sentence in temp.split('다.')]
 
@@ -160,6 +145,3 @@ class Summarizer:
     def mainForWeb(self,file_name,index,number):
         return self.generate_summary(file_name,index, number)
 
-
-# 길이에 대한 normalize
-# 벡터화 시 TFIDF 기반으로 가중치를 준다.

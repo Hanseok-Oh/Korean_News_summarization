@@ -6,9 +6,6 @@ from tqdm import tqdm
 import pandas as pd
 import warnings
 warnings.filterwarnings('ignore')
-# from preprocess import Processing
-
-
 
 class LDA:
     def __init__(self, processed_data, passes=30, limit=12, start=3, step=2):
@@ -56,7 +53,6 @@ class LDA:
                 if j == 0:  # => dominant topic
                     wp = ldamodel.show_topic(topic_num)
                     topic_keywords = ", ".join([word for word, prop in wp if word != query])
-                    # print("topic keywords:",topic_keywords)
                     sent_topics_df = sent_topics_df.append(
                         pd.Series([int(topic_num+1), round(prop_topic, 4), topic_keywords]), ignore_index=True)
                 else:
@@ -88,7 +84,6 @@ class LDA:
                                              axis=0)
         # Format
         sent_topics_sorteddf.columns = ['Topic_Num', "Topic_Perc_Contrib", "Keywords", "Text"]
-        print("After LDA extract index per topic -input file length:", len(sent_topics_sorteddf))
         return sent_topics_sorteddf
 
 

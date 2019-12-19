@@ -65,8 +65,6 @@ class LDA:
         sent_topics_df = pd.concat([sent_topics_df, contents], axis=1).reset_index()
         sent_topics_df.columns = ['Document_No', 'Dominant_Topic', 'Topic_Perc_Contrib', 'Keywords', 'Text']
         sent_topics_df = sent_topics_df.set_index('Document_No')
-        print("After LDA format topics sentence-input file length:", len(sent_topics_df))
-
         return sent_topics_df
 
     def extract_index_per_topic(self, ldamodel,query):

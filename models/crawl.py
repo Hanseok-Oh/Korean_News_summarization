@@ -12,6 +12,7 @@ class Crawling:
         self.query = query
         self.s_date = s_date
         self.e_date = e_date
+        self.article_links=[]
         print("crawling: ", self.query)
 
     def crawler(self, page):
@@ -31,6 +32,12 @@ class Crawling:
             try:
                 if urls["href"].startswith("https://news.naver.com"):
                     news_detail = self.get_news(urls["href"])
+                    # 중복 기사 링크 제거
+                    if news_detail[3] in self.article_links:
+                        continue
+                    else:
+                        self.article_links.append(news_detail[3])
+
                     reversed_content_2 = ''.join(reversed(news_detail[2]))
                     for i in range(0, len(reversed_content_2)):
                         if reversed_content_2[i:i + 2] == '.다':
@@ -40,13 +47,24 @@ class Crawling:
                         if news_detail[2][i:i+3] == '기자]' or news_detail[2][i:i+3] == '자 =':
                             news_detail[2] = news_detail[2][i+3:]
                             break
+                        if news_detail[2][i:i+4] == ' 기자 ':
+                            news_detail[2]=news_detail[2][i+4:]
+                            break
 
 
                     if 'https://news.naver.com/main/read.nhn?mode=LSD&mid=sec&sid1=101&oid=024&aid=0000061805' in news_detail:
                         news_detail[2] = news_detail[2].replace('\r', '')
                         # pass
-                    if len(news_detail[2].split('.'))<3:
+                    if len(news_detail[2].split('.'))<5:
                         continue
+
+                    if ']' in news_detail[2][:len(news_detail[2]) // 4]:
+                        temp = news_detail[2].split(']')[1:]  # 기사 앞 [기자이름] 부분 제거
+                        news_detail[2] = ' '.join(temp)
+
+                    if len(news_detail)!=5:
+                        continue
+
                     f.write(
                         "{}\t{}\t{}\t{}\t{}\n".format(news_detail[1], news_detail[4], news_detail[0],
                                                       news_detail[2],

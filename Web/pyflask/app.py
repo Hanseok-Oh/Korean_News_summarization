@@ -38,21 +38,12 @@ def show():
         ## for temp test
         temp_query = '삼성전자'
         temp_target_index ='5, 7, 10, 12'
-        temp_summary = '삼성전자는 앞으로 한석이를 채용하기로 했다 샷'
+        temp_summary = '삼성전자는 앞으로 더 많은 인원을 채용하기로 했다'
         temp_summary2 = '또 뭐를 넣을테야'
 
     # return render_template('show.html', query = query,target_index = target_index)
     return render_template('show.html', query = temp_query,target_index = temp_target_index,summary = temp_summary,summary2 = temp_summary2)
 
-@app.route('/summary')
-def summary():
-    if request.method =='POST':
-    return render_template('summary.html')
-
-@app.route('/lda')
-def summary():
-    if request.method =='POST':
-    return render_template('lda.html')
 
 
 if __name__=='__main__':

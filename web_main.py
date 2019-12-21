@@ -25,14 +25,6 @@ def main(args):
 
     new_directory = result_path + '/data/{}'.format(args.query)
 
-    # if os.path.exists(new_directory):
-    #     shutil.rmtree(new_directory)
-    #     time.sleep(1)
-    #     os.mkdir(new_directory)
-
-    # if not os.path.exists(new_directory):
-    #     os.mkdir(new_directory)
-
     if not os.path.exists(new_directory):
         os.mkdir(new_directory)
         c = Crawling(args.query, args.s_date, args.e_date, result_path)

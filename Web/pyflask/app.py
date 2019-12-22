@@ -1,48 +1,56 @@
 from flask import Flask,render_template,url_for,request, redirect
 import sys
 import os
-# print("here!:",os.getcwd())
 sys.path.insert(0,os.getcwd().replace("\\",'/'))
 from web_main import main
 import easydict
 
 app = Flask(__name__)
 
+query = ''
+
 @app.route('/')
 def index():
-    # if request.method =='POST':
-    #     query = request.form['query']
-    #     s_date = request.form['s_date']
-    #     e_date = request.form['e_date']
-    #     args = easydict.EasyDict({"query": query, "s_date": s_date, "e_date": e_date})
-    #     summarized_text = main(args)
-    #     print("\nsummarized_text:",summarized_text)
-    #     summarized_text = '아따 요약좀 됐으면 합니다.'
-    #     value_list = ['query','summarized_text']
-    #     return redirect(url_for('/summary'))
     return render_template('index.html')
 
 @app.route('/show', methods = ['GET','POST'])
 def show():
-    # query = '삼성전자'
-    # return 'Summarized text for %s is ' % query
     if request.method =='POST':
-        ## for real test
-        # query = request.form['query']
-        # s_date = request.form['s_date']
-        # e_date = request.form['e_date']
-        # number = 3
-        # args = easydict.EasyDict({"query": query, "s_date": s_date, "e_date": e_date,'number':number})
-        # target_index, summarized_text = main(args)
+        global query
+        query = request.form['query']
+        s_date = "2019.01.01" #시작지점 편리화를 위한 지정
+        e_date = request.form['e_date']
+        args = easydict.EasyDict({"query": query, "s_date": s_date, "e_date": e_date})
+        topic_keywords, summarized_text = main(args)
 
-        ## for temp test
-        temp_query = '삼성전자'
-        temp_target_index ='5, 7, 10, 12'
-        temp_summary = '삼성전자는 앞으로 더 많은 인원을 채용하기로 했다'
-        temp_summary2 = '또 뭐를 넣을테야'
+        topic_keywords1=topic_keywords[0]
+        topic_keywords2 = topic_keywords[1]
+        topic_keywords3 = topic_keywords[2]
 
-    # return render_template('show.html', query = query,target_index = target_index)
-    return render_template('show.html', query = temp_query,target_index = temp_target_index,summary = temp_summary,summary2 = temp_summary2)
+        summarized_text1 = sum(summarized_text[:2], [])
+        summarized_text1 = " ".join(summarized_text1)
+
+        summarized_text2 = sum(summarized_text[2:4], [])
+        summarized_text2 = " ".join(summarized_text2)
+
+        summarized_text3 = sum(summarized_text[4:6], [])
+        summarized_text3 = " ".join(summarized_text3)
+
+
+    return render_template('show.html', query = query,topic_keywords1 = topic_keywords1,summary1 = summarized_text1, \
+                           topic_keywords2=topic_keywords2, summary2=summarized_text2,\
+                           topic_keywords3=topic_keywords3, summary3=summarized_text3)
+
+
+@app.route('/LDA_Visualization',methods = ['GET','POST'])
+
+def lda_visualzation():
+    return render_template('LDA_Visualization/{}.html'.format(query))
+
+
+@app.route('/summary')
+def summary():
+    return render_template('summary.html')
 
 
 

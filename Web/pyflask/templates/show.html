@@ -20,7 +20,14 @@ Released   : 20131117
 <link href="{{ url_for('static', filename='default.css') }}" rel="stylesheet" type="text/css" media="all" />
 <link href="{{ url_for('static', filename='fonts.css') }}" rel="stylesheet" type="text/css" media="all" />
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+$( function() {
+$( "#accordion" ).accordion();
+} );
+</script>
 
 <!--[if IE 6]><link href="default_ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
 
@@ -31,7 +38,7 @@ Released   : 20131117
       <div id="logo">
          <span class="icon icon-group"></span>
          <h1><a href="#">취준생을 위한 기업분석</a></h1>
-         <span>Made by <a href="http://templated.co" rel="nofollow">귀찮은 취준생</a></span>
+         <span>Made by <a href="https://github.com/hanseokOh/Korean_News_summarization" rel="nofollow">귀찮은 취준생</a></span>
       </div>
       <div id="triangle-up"></div>
    </div>
@@ -40,31 +47,35 @@ Released   : 20131117
       <div id="menu">
          <ul>
             <li class="current_page_item"><a href="#" accesskey="1" title="">이슈 분류</a></li>
-            <li><a href="#" accesskey="2" title="">이슈 visualization</a></li>
-            <li><a href="#" accesskey="3" title="">summary</a></li>
-
-<!--            <li><a href="#" accesskey="3" title=""><p>-->
-<!--               <font size="4.5"; color="white">-->
-<!--                  검색기간, 기업명 설정 -> 이슈 파악 -> 기사 요약 -> 재무재표 분석</font>-->
-<!--            </p></a></li>-->
-            <li><a href= "#" accesskey="4" title="">Search Trend</a></li>
-            <li><a href="#" accesskey="5" title="">재무제표 분석</a></li>
+            <li><a href="LDA_Visualization" target= "_blank" accesskey="2" title="">이슈 시각화</a></li>
+            <li><a href= "#" accesskey="3" title="">검색 트랜드</a></li>
+            <li><a href="#" accesskey="4" title="">재무제표 분석</a></li>
          </ul>
   </div>
 </div>
 <div id="wrapper">
    <div id="featured-wrapper">
-      <h2>클릭한 이름은</h2>
-      <p>{{ query }}입니다.</p>
-      <h2>대표 문서에 대한 정보는</h2>
-      <p>{{ target_index }} 입니다.</p>
-      <h2>요약 결과는 다음과 같습니다. </h2>
-      <p>{{summary}}</p>
-      <p>{{summary2}}</p>
-      <div class="extra2 container">
-      </div>
+      <h2>'{{query}}'에대한 기업분석 결과입니다.</h2>
    </div>
 </div>
+<div id="accordion">
+  <h3>{{ topic_keywords1 }}</h3>
+  <div>
+    <p>{{summary1}}</p>
+  </div>
+  <h3>{{topic_keywords2}}</h3>
+  <div>
+    <p>{{summary2}}</p>
+  </div>
+  <h3>{{topic_keywords3}}</h3>
+  <div>
+    <p>{{summary3}}</p>
+  </div>
+</div>
+
+
+
+
 
 <!--<div class="wrap">-->
 <!--    <h2>클릭한 이름은 {{ query }}입니다.</h2>-->

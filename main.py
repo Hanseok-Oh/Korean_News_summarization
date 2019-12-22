@@ -46,6 +46,7 @@ def main(args):
     ldamodel,vis = a.selected_model()
 
     pyLDAvis.save_html(vis, args.result_path + '/data/{}/LDA_Visualization.html'.format(args.query))
+    pyLDAvis.save_html(vis, result_path + '/Web/pyflask/templates/LDA_visualization/{}.html'.format(args.query))
     print("Visualization of LDA result is saved in directory.")
 
     a.format_topics_sentences(ldamodel,args.query).to_excel(args.result_path+'/data/{}/lda.xlsx'.format(args.query))

@@ -1084,18 +1084,18 @@ ul.contact li a.icon-rss:before
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 body{
-  background: #ffc000;
+  background: #ffffff;
   font-family: 'Open Sans', sans-serif;
 }
-
-.search {
   width: 180%;
-  margin-right:auto;
-  margin-left:auto;
+.search {
+  position: absolute;
+  right:20px;
+  left:20px;
 }
 
 .searchTerm {
-  width: 100%;
+  width: 98%;
   border: 3px solid #ffc000;
   padding: 5px;
   height: 40px;
@@ -1119,14 +1119,13 @@ body{
   cursor: pointer;
   font-size: 20px;
 }
-
-/*Resize the wrap to see the search bar change!*/
-.wrap{
-  width: 50%;
-  position: absolute;
   top: 80%;
   left: 30%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%)
+/*Resize the wrap to see the search bar change!*/
+.wrap{
+  width: 25%;
+  position: relative;
 }
 
 

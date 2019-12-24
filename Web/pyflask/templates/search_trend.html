@@ -46,7 +46,7 @@ $( "#accordion" ).accordion();
 <div id="menu-wrapper">
       <div id="menu">
          <ul>
-            <li class="current_page_item"><a href="#" accesskey="1" title="">이슈 분류</a></li>
+            <li class="current_page_item"><a href="show" accesskey="1" title="">이슈 분류</a></li>
             <li><a href="LDA_Visualization" target= "_blank" accesskey="2" title="">이슈 시각화</a></li>
             <li><a href= "Search_Trend" accesskey="3" title="">검색 트랜드</a></li>
             <li><a href="Financial_Report" accesskey="4" title="">재무제표 분석</a></li>
@@ -54,23 +54,16 @@ $( "#accordion" ).accordion();
   </div>
 </div>
 <div id="wrapper">
+   <style>
+			div { text-align: center; }
+		</style>
    <div id="featured-wrapper">
-      <h2>'{{query}}'에 대한 기업분석 결과입니다.</h2>
+      <h2>'{{query}}'에 대한 검색 트랜드 결과입니다.</h2>
+      <h3>관심 기간내 상대적 검색 빈도추이를 나타냅니다.</h3>
+    </div>
+   <div id="image-wrapper">
+      <img src="static/images/Trends/{{query}}_trend.png" alt = "NO trend Image" align="center" width="1400" height="700">
    </div>
-</div>
-<div id="accordion">
-  <h3>{{ topic_keywords1 }}</h3>
-  <div>
-    <p>{{summary1}}</p>
-  </div>
-  <h3>{{topic_keywords2}}</h3>
-  <div>
-    <p>{{summary2}}</p>
-  </div>
-  <h3>{{topic_keywords3}}</h3>
-  <div>
-    <p>{{summary3}}</p>
-  </div>
 </div>
 </body>
 </html>

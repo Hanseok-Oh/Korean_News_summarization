@@ -12,7 +12,7 @@ def read_data(filename, encoding='utf-8'):
 class Processing:
     def __init__(self):
         self.hannanum = Hannanum()
-        self.stop_words = read_data(filename='korean_stopwords_list.txt')
+        self.stop_words = read_data(filename='sub_data/korean_stopwords_list.txt')
 
     def read_file(self,filename):
         # data 구조 : 날짜, 언론사, 제목, 본문, 링크
@@ -20,9 +20,8 @@ class Processing:
         return df
 
     def cleanText(self,sentence):
-        # 특수문자를 제거
+        # 특수문자를 제거 (.을 제외)
         assert type(sentence) == str
-        # cleaned_sentence = re.sub('[-=+,#/\?:^$@*\"※~&%ㆍ!』\’\‘|\(\)\[\]\<\>`\'…》ⓒ▶▲↑↓◆△]', '', sentence)
         cleaned_sentence = re.sub('[^\w. ]', '', sentence)
         return cleaned_sentence
 
@@ -54,23 +53,7 @@ class Processing:
         for sentence in sentences:
             if type(sentence)!=str:
                 continue
-            # print("\n\n\n sentence: ", type(sentence), sentence,)
-            # temp =sentence
 
-            # if ']' in temp[:len(temp)//4]:
-            #     temp = temp.split(']')[1:]  # 기사 앞 [기자이름] 부분 제거
-            #     temp = ' '.join(temp)
-
-            # if '@' in temp[len(temp)//2:]:
-            #     temp = temp.split('@')[:-1]  # 기사 앞 [기자이름] 부분 제거
-            #     temp = ' '.join(temp)
-
-            # if '.' in temp:
-            #     temp = temp.split('.')[:-1]
-            #     temp = '. '.join(temp)
-            #     sentence = temp
-
-            # print("origin:",sentence)
             temp = self.cleanText(sentence)
             # print("temp:",temp)
             temp1 = self.extract_nouns(temp)

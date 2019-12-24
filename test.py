@@ -1,34 +1,142 @@
+import requests
+import matplotlib.pyplot as plt
+from bs4 import BeautifulSoup
+import seaborn as sns
+import numpy as np
 import pandas as pd
+import matplotlib as mpl
+import matplotlib.font_manager as fm
 import os
-
-result_path = os.getcwd().replace("\\",'/')
-new_directory = result_path + '/data/{}'.format('카카오')
+import easydict
 
 
-lda_best = pd.read_excel(new_directory + '/lda_best.xlsx')
-target_index=[]
-for keys in lda_best['Keywords']:
-    target_index.append([keys])
-# print("target index:\n", target_index)
+#사용자 설정에서 폰트 배포 필요
+font_location = "C:/Users/rnfek/miniconda3/Lib/site-packages/matplotlib/mpl-data/fonts/ttf/NanumSquareR.ttf"
+font_name = fm.FontProperties(fname=font_location).get_name()
+mpl.rc('font',family=font_name)
 
-summarize_result=[]
-f = open(new_directory+'/summary.txt', 'r', encoding='utf-8')
-lines = f.readlines()
-for line in lines:
-    summarize_result.append([line])
+result_path = os.getcwd().replace("\\", '/')
+new_directory = result_path + '/Web/pyflask/static/images/Report/'
 
-f.close()
 
-# print("summarize_result:\n",summarize_result)
 
-temp = [['Summarize Text of topic - 2, index-702: \n'], ['카카오모빌리티는 과학기술정보통신부와 정보통신산업진흥원이 추진하는 인공지능AI 기반 응급의료시스템 개발 사업에 참여 구급차량 전용 내비게이션 및 구급차 출동 안내 서비스를 개발한다고 18일 밝혔다. 119 긴급 출동 알림 서비스를 확대 적용하면 환자 이송 시간을 단축하고 구급 차량과 일반 차량과의 2차 사고 발생 위험을 낮출 수 있을 뿐 아니라 국가 긴급 재해나 재난 발생 시 일반 차량 운전자들의 응급 환자 이송 동참을 유도할 수 있다. 119 긴급 출동 알림 서비스는 카카오내비를 통해 구급 차량 출동 정보와 사고 정보를 일반 차량 운전자들에게 알리는 서비스다\n']]
-str = " ".join(temp[0])
-print(str)
-print("\n ".join(temp[1]).split('.'))
+class MakeReport:
+    '''
+    find_code -> make_data -> remake_df
+    '''
+    def __init__(self,args):
+        self.query = args.query
+        self.base_URL = "https://finance.naver.com/item/main.nhn?code="
 
-# str = str + " ".join(temp[1]).split('.')
+    def find_code(self,query):
+        df = pd.read_excel('sub_data/company_code.xlsx',skiprows=3)
+        df = df.loc[(df['업종명'] == 'KOSPI') | (df['업종명'] == 'KOSDAQ'), :]
+        try:
+            temp_code = df.loc[df['종목명'] == query, '종목코드'].values[0] # series 데이터는 idex, value의 값을 지닌다.
+            code = temp_code.replace("'", "")
 
-temp=sum(temp,["\n"])
-str ="\n".join(temp)
+        except:
+            code =None
+            print("There is no code for requested query.")
 
-print(str)
+        return code
+
+
+    def remake_df(self, df):
+        #dataframe 형태 변형
+        index = []
+        for j in df.index:
+            for i in range(len(df.columns)):
+                index.append(j)
+
+        name = []
+        for i in range(len(df.index)):
+            for j in df.columns:
+                name.append(j)
+
+        value = []
+        for i in range(len(df.index)):
+            for j in range(len(df.columns)):
+                value.append(df.iloc[i, j])
+
+        return index,name,value
+
+    def make_data(self):
+        code = self.find_code(self.query)
+        if code== None:
+            return -1
+
+        URL = self.base_URL + code
+        target_company = requests.get(URL)
+        html = target_company.text
+        soup = BeautifulSoup(html, 'html.parser')
+        finance_html = soup.select('div.section.cop_analysis div.sub_section')[0]
+        th_data = [item.get_text().strip() for item in finance_html.select('thead th')]
+        annual_date = th_data[3:7]
+        quarter_date = th_data[7:13]
+
+        finance_index = [item.get_text().strip() for item in finance_html.select('th.h_th2')][3:]
+        finance_data = [item.get_text().strip() for item in finance_html.select('td')]
+        finance_data = np.array(finance_data)
+        finance_data.resize(len(finance_index), 10)
+
+        finance_date = annual_date + quarter_date
+        finance = pd.DataFrame(data=finance_data[0:,0:], index=finance_index, columns=finance_date)
+
+        annual_finance = finance.iloc[:, :4]
+        quarter_finance = finance.iloc[:, 4:]
+
+        df = np.transpose(quarter_finance.iloc[0:5, :])
+        df[['영업이익률', '순이익률']] = df[['영업이익률', '순이익률']].apply(pd.to_numeric)
+        df['영업이익'] = df.영업이익.str.replace(',', '').astype('int64')
+        df['매출액'] = df.매출액.str.replace(',', '').astype('int64')
+        df['당기순이익'] = df.당기순이익.str.replace(',', '').astype('int64')
+
+        # 당기순이익 너무 값이 커서 10으로 나눔
+        df.iloc[:,0] = df.iloc[:,0]/10
+
+        # df2 매출액 영업이익 당기순이익
+        df2 = df.iloc[:,0:3]
+
+        index,name,value = self.remake_df(df2)
+        new_df = pd.DataFrame({'Date': index, 'FinancialStatements': name, 'Value': value})
+
+        # df3 영업이익률 당기순익률
+        df3 = df.iloc[:,3:5]
+
+        index,name,value = self.remake_df(df3)
+        new_df2 = pd.DataFrame({'Date':index,'Profit':name,'Value':value})
+
+        return new_df,new_df2
+
+
+    def plot_report(self,new_df,new_df2):
+        sns.barplot(x='Date', y='Value', hue='FinancialStatements', data=new_df) # default : dodge=True
+        plt.title('FinancialStatements', fontsize=20)
+        plt.ylabel('one hundred million', fontsize = 10)
+        plt.legend(fontsize=7,loc=1)
+
+        plt.twinx()
+        sns.lineplot(x='Date',  y='Value', hue='Profit',data=new_df2)
+        plt.ylabel('Percent', fontsize=10)
+        plt.legend(fontsize=7,loc=7)
+        plt.savefig(new_directory + "{}_report.png".format(self.query))
+        plt.show()
+        print("financial report is saved in the directory\n")
+
+
+    def make_plot(self):
+        if self.make_data() == -1:
+            return -1
+        else:
+            new_df,new_df2 = self.make_data()
+            self.plot_report(new_df,new_df2)
+            return 0
+
+
+query = 'LG전자'
+e_date='2019.12.20'
+s_date='2019.09.01'
+args = easydict.EasyDict({"query": query, "s_date": s_date, "e_date": e_date})
+mr = MakeReport(args)
+mr.make_plot()

@@ -23,17 +23,11 @@ class Summarizer:
         filedata = content_data[index] # indexing으로 원하는 기사 접근 가능
 
         temp = filedata
+        if type(temp)!=str:
+            return -1
 
-        for i in range(0, len(temp)//3):
-            if temp[i:i + 3] == '기자]' or temp[i:i + 3] == '자 =' or temp[i:i + 3] == ' 기자':
-                temp = temp[i + 3:]
-                break
-
-        sentence =temp
-        # temp= re.sub('[-=+,#/\?:^$*\"※~&%ㆍ!』\’\‘|\(\)\[\]\<\>`\'…》ⓒ▶▲↑↓◆△]', '', sentence)
-        temp = re.sub('[^\w. ]', '', sentence) #숫자,문자 그리고 .을 제외한 모든 특수문자 제거
-
-        article = [sentence+'다' for sentence in temp.split('다.')]
+        stopped_temp = re.sub('[^\w. ]', '', temp) #숫자,문자 그리고 .을 제외한 모든 특수문자 제거
+        article = [sentence+'다' for sentence in stopped_temp.split('다.')]
 
         result =[]
         for sentence in article:
@@ -43,7 +37,6 @@ class Summarizer:
                     temp.append(token)
             result.append(temp)
 
-        # print("\nresult: ",result)
         return result
 
 
@@ -94,12 +87,15 @@ class Summarizer:
 
 
     def generate_summary(self,file_name,top_n,index):
-        stopwords = read_data(filename='korean_stopwords_list.txt')
+        stopwords = read_data(filename='sub_data/korean_stopwords_list.txt')
         stopwords = sum(stopwords,[])
         summarize_text = []
 
         # Step 1 - Read text anc split it
         sentences = self.read_article(file_name,index)
+        if sentences==-1:
+            print("contents error")
+            return -1
 
         #token화 추가
         hannanum = Hannanum()
@@ -141,7 +137,4 @@ class Summarizer:
 
     def main(self,args):
         return self.generate_summary(args.result_path+'/data/{}/crawling.xlsx'.format(args.query),args.number,args.index)
-
-    def mainForWeb(self,file_name,index,number):
-        return self.generate_summary(file_name,index, number)
 

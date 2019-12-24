@@ -6,3 +6,5 @@ shutil
 multiprocessing
 nltk
 gensim
+simplejson
+seaborn

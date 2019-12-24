@@ -534,6 +534,14 @@ ul.contact li a.icon-rss:before
 	background: #FFF;
 }
 
+#featured-image
+{
+width:200px;
+height:100px;
+float:center;
+}
+
+
 #page
 {
 	overflow: hidden;
@@ -647,6 +655,7 @@ ul.contact li a.icon-rss:before
 	text-align: center;
 
 }
+
 
 #featured
 {
@@ -1084,7 +1093,7 @@ ul.contact li a.icon-rss:before
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 body{
-  background: #ffc000;
+  background: #ffffff;
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -1122,10 +1131,10 @@ body{
 
 /*Resize the wrap to see the search bar change!*/
 .wrap{
-  width: 50%;
+  width: 20%;
   position: absolute;
   top: 80%;
-  left: 30%;
+  left: 42%;
   transform: translate(-50%, -50%);
 }
 

@@ -36,7 +36,7 @@ def main(args):
         os.mkdir(new_directory)
         c = Crawling(args.query, args.s_date, args.e_date, result_path)
         # page 수 조정 가능
-        for i in tqdm(range(1, 201, 10)):
+        for i in tqdm(range(1, 301, 10)):
             c.main(page=i)
         #new
         p = Processing()
@@ -50,18 +50,22 @@ def main(args):
         pyLDAvis.save_html(vis, result_path + '/Web/pyflask/templates/LDA_visualization/{}.html'.format(args.query))
         print("Visualization of LDA result is saved in directory.")
 
-        a.format_topics_sentences(ldamodel, args.query).to_excel(result_path + '/data/{}/lda.xlsx'.format(args.query))
+        a.format_topics_sentences(ldamodel, args.query).to_excel(new_directory+'/lda.xlsx'.format(args.query))
         a.extract_index_per_topic(ldamodel, args.query).to_excel(
             result_path + '/data/{}/lda_best.xlsx'.format(args.query))
 
         target_index = a.extract_index_per_topic(ldamodel, args.query).index
+        print("target_index:",target_index)
 
         s = Summarizer()
-        f = open(result_path + '/data/{}/summary.txt'.format(args.query), 'a', encoding='utf-8')
+        f = open(new_directory+'/summary.txt'.format(args.query), 'w', encoding='utf-8')
         for i, index in enumerate(target_index):
-            f.write("Summarize Text of topic-{},index-{}: \n".format(i + 1, index))
-            f.write(s.generate_summary(result_path + '/data/{}/crawling.xlsx'.format(args.query), 3,
-                                       index) + '\n')
+            try:
+                f.write("Summarize Text of topic - {}, index-{}: \n".format(topic + 1, index))
+                f.write(s.generate_summary(new_directory+'/crawling.xlsx'.format(args.query), args.number,index)+'\n')
+                f.write("link: " + pd.read_excel(new_directory+'/crawling.xlsx'.format(args.query)).loc[index, 'link'] + "\n\n")
+            except:
+                continue
         f.close()
 
 

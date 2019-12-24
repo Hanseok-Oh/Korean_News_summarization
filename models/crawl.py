@@ -62,7 +62,7 @@ class Crawling:
                         temp = news_detail[2].split(']')[1:]  # 기사 앞 [기자이름] 부분 제거
                         news_detail[2] = ' '.join(temp)
 
-                    if len(news_detail)!=5:
+                    if type(news_detail[2])!=str or len(news_detail[2])<2: # contents가 비어있을 경우 float type :nan
                         continue
 
                     f.write(

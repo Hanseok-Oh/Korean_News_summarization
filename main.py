@@ -28,11 +28,11 @@ def define_argparser():
     parser.add_argument('--e_date',required=False, default='2019.03.31',help='crawling을 실시할 끝 날짜')
     parser.add_argument('--result_path',required=False, default=os.getcwd().replace("\\","/"),help='crawling을 완성한 파일을 저장할 위치')
     parser.add_argument('--crawl_only', action='store_true', help='crawling만 실시.')
-    parser.add_argument('--page', required=False, default=range(1, 1001, 10), type=str, metavar ='range', help='크롤링을 실시할 페이지 수를 입력하세요.')
+    parser.add_argument('--page', required=False, default=range(1, 801, 10), type=str, metavar ='range', help='크롤링을 실시할 페이지 수를 입력하세요.')
     parser.add_argument('--LDA_only', action='store_true', help='LDA만 실시.')
     parser.add_argument('--summary_only', action='store_true', help='요약만 진행할 지 여부.')
     parser.add_argument('--index', required=False, default=0, type=int,metavar='N', help='요약을 진행할 txt파일의 index를 입력하시오.')
-    parser.add_argument('--number', required=False, default=2, type=int,metavar='N', help='결과로 제시할 문장 수를 입력하시오.')
+    parser.add_argument('--number', required=False, default=3, type=int,metavar='N', help='결과로 제시할 문장 수를 입력하시오.')
 
     args = parser.parse_args()
     return args
@@ -46,7 +46,7 @@ def main(args):
     ldamodel,vis = a.selected_model()
 
     pyLDAvis.save_html(vis, args.result_path + '/data/{}/LDA_Visualization.html'.format(args.query))
-    pyLDAvis.save_html(vis, result_path + '/Web/pyflask/templates/LDA_visualization/{}.html'.format(args.query))
+    pyLDAvis.save_html(vis, args.result_path + '/Web/pyflask/templates/LDA_visualization/{}.html'.format(args.query))
     print("Visualization of LDA result is saved in directory.")
 
     a.format_topics_sentences(ldamodel,args.query).to_excel(args.result_path+'/data/{}/lda.xlsx'.format(args.query))
@@ -71,10 +71,17 @@ if __name__ =='__main__':
         s = Summarizer()
         target_index = pd.read_excel(args.result_path+'/data/{}/lda_best.xlsx'.format(args.query),index_col=0).index
         print("target index:",target_index)
+
         f = open(args.result_path + '/data/{}/summary.txt'.format(args.query),'w', encoding='utf-8')
         for topic,index in enumerate(target_index):
-            f.write("Summarize Text of topic - {}, index-{}: \n".format(topic+1,index))
-            f.write(s.generate_summary(args.result_path+'/data/{}/crawling.xlsx'.format(args.query),args.number,index)+'\n\n')
+            try:
+                f.write("Summarize Text of topic - {}, index-{}: \n".format(topic+1,index))
+                f.write(s.generate_summary(args.result_path+'/data/{}/crawling.xlsx'.format(args.query),args.number,index)+"\n")
+                f.write("link: "+pd.read_excel(args.result_path + '/data/{}/crawling.xlsx'.format(args.query)).loc[index,'link'] + "\n\n")
+
+            except Exception as e:
+                print(e)
+                continue
         f.close()
 
     elif args.LDA_only:

@@ -17,7 +17,7 @@ code flow : dataCrawl -> preprocess -> LDA -> summarization
 
 자세한 설명을 참고하고 싶으면 [공유자료](https://drive.google.com/open?id=17kE1KdiKyJBjpMhrkqV58NT7t7AR3LCX)를 참고하세요. 
 
-<center><img src='img/poster.png'></center>
+![poster](/img/poster.png)
 
 ### Web 화면(version b) 예시
 

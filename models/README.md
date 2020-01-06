@@ -62,6 +62,7 @@ input sentence -> 특수문자 제거 -> 명사추출 -> 불용어 제거
 </pre></code>
 
 - How to use
+
   processing.main(filename) 형식으로 사용 
 
   filename은 앞선 crawl.py 에서 형성된 txt 형태의 파일 형식을 따름

@@ -172,8 +172,6 @@ $RECYCLE.BIN/
 # gexf files for gephi
 .gexf
 
-# plt files
-.png
 
 # floo files
 .floo

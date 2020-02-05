@@ -19,9 +19,20 @@ code flow : dataCrawl -> preprocess -> LDA -> summarization
 
 ![poster](/img/poster.png)
 
+### Web 화면(version b) 예시
+
+
+- Web 검색 화면 
+
 ![Web 검색화면](/img/web1.png)
+
+- Web 기사 이슈별 분류 및 요약 화면
 ![Web 요약화면](/img/web2.png)
+
+- Web 검색트랜드 제시 화면
 ![Web 검색트랜드](/img/web3.png)
+
+- Web 재무제표 정보 제시 화면
 ![Web 재무제표](/img/web4.png)
 
 ## Example

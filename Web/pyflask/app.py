@@ -10,7 +10,7 @@ import easydict
 
 app = Flask(__name__)
 
-query,s_date,e_date ='','','2019.12.20'
+query,s_date,e_date ='','','2020.02.05'
 topic_keywords1,topic_keywords2,topic_keywords3,summarized_text1,summarized_text2,summarized_text3 = '','','','','',''
 args ={}
 

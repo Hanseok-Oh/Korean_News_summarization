@@ -28,7 +28,7 @@ def define_argparser():
     parser.add_argument('--e_date',required=False, default='2019.03.31',help='crawling을 실시할 끝 날짜')
     parser.add_argument('--result_path',required=False, default=os.getcwd().replace("\\","/"),help='crawling을 완성한 파일을 저장할 위치')
     parser.add_argument('--crawl_only', action='store_true', help='crawling만 실시.')
-    parser.add_argument('--page', required=False, default=range(1, 801, 10), type=str, metavar ='range', help='크롤링을 실시할 페이지 수를 입력하세요.')
+    parser.add_argument('--page', required=False, default=range(1, 1001, 10), type=str, metavar ='range', help='크롤링을 실시할 페이지 수를 입력하세요.')
     parser.add_argument('--LDA_only', action='store_true', help='LDA만 실시.')
     parser.add_argument('--summary_only', action='store_true', help='요약만 진행할 지 여부.')
     parser.add_argument('--index', required=False, default=0, type=int,metavar='N', help='요약을 진행할 txt파일의 index를 입력하시오.')

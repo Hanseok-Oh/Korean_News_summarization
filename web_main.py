@@ -36,7 +36,7 @@ def main(args):
         os.mkdir(new_directory)
         c = Crawling(args.query, args.s_date, args.e_date, result_path)
         # page 수 조정 가능
-        for i in tqdm(range(1, 301, 10)):
+        for i in tqdm(range(1, 1201, 10)):
             c.main(page=i)
         #new
         p = Processing()

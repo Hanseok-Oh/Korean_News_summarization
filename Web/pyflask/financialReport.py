@@ -43,19 +43,14 @@ class MakeReport:
     def remake_df(self, df):
         #dataframe 형태 변형
         index = []
-        for j in df.index:
-            for i in range(len(df.columns)):
-                index.append(j)
-
         name = []
-        for i in range(len(df.index)):
-            for j in df.columns:
-                name.append(j)
-
         value = []
+
         for i in range(len(df.index)):
-            for j in range(len(df.columns)):
-                value.append(df.iloc[i, j])
+            for j,data in enumerate(df.columns):
+                index.append(df.index[i])
+                name.append(data)
+                value.append(df.iloc[i,j])
 
         return index,name,value
 
@@ -85,11 +80,9 @@ class MakeReport:
         quarter_finance = finance.iloc[:, 4:]
 
         df = np.transpose(quarter_finance.iloc[0:5, :])
-        df = np.transpose(quarter_finance.iloc[0:5, :])
         df[['영업이익률', '순이익률']] = df[['영업이익률', '순이익률']].apply(pd.to_numeric)
-        df['영업이익'] = df.영업이익.str.replace(',', '').astype('int64')
-        df['매출액'] = df.매출액.str.replace(',', '').astype('int64')
-        df['당기순이익'] = df.당기순이익.str.replace(',', '').astype('int64')
+        for i in ['영업이익','매출액','당기순이익']:
+            df[i] = df[i].str.replace(',','').astype('int64')
 
         # 당기순이익 너무 값이 커서 10으로 나눔
         df.iloc[:,0] = df.iloc[:,0]/10

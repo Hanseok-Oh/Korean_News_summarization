@@ -51,19 +51,12 @@ class Crawling:
                             news_detail[2]=news_detail[2][i+4:]
                             break
 
-
-                    if 'https://news.naver.com/main/read.nhn?mode=LSD&mid=sec&sid1=101&oid=024&aid=0000061805' in news_detail:
-                        news_detail[2] = news_detail[2].replace('\r', '')
-                        # pass
-                    if len(news_detail[2].split('.'))<5:
+                    if (len(news_detail[2].split('.'))<5) or (type(news_detail[2])!=str): # contents가 비어있을 경우 float type :nan
                         continue
 
                     if ']' in news_detail[2][:len(news_detail[2]) // 4]:
                         temp = news_detail[2].split(']')[1:]  # 기사 앞 [기자이름] 부분 제거
                         news_detail[2] = ' '.join(temp)
-
-                    if type(news_detail[2])!=str or len(news_detail[2])<2: # contents가 비어있을 경우 float type :nan
-                        continue
 
                     f.write(
                         "{}\t{}\t{}\t{}\t{}\n".format(news_detail[1], news_detail[4], news_detail[0],

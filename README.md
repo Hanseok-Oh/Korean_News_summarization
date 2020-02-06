@@ -15,7 +15,7 @@ code flow : dataCrawl -> preprocess -> LDA -> summarization
 
 본 프로젝트는 실제 주변에 있는 문제 상황을 인식하고 이를 해결하기 위해 기존에 있던 분석 기법들을 활용하여 사회 문제를 해결한다는 의의를 가지며, 실제로 본 모델을 활용한 기업 분석 사례를 제공함으로써 우리 모델이 가지는 완성도와 활용 가능성을 보여준다. 
 
-자세한 설명을 참고하고 싶으면 [공유자료](https://drive.google.com/open?id=17kE1KdiKyJBjpMhrkqV58NT7t7AR3LCX)를 참고하세요. 
+자세한 설명을 참고하고 싶으면 [공유자료](https://drive.google.com/open?id=1vTMwbIc-MpyrU8Vljty-SOtlrC3j1jse)를 참고하세요. 
 
 ![poster](/img/poster.png)
 
